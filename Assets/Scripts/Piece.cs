@@ -22,8 +22,10 @@ public class Piece : MonoBehaviour
     {
         Rotate();
         RotateValue();
-        //GameManager.gameManager.CalculatorConected();
-        GameManager.gameManager.EndGame();
+        GenatorMap.genatorMap.CalculatorConected();
+        GameManager.gameManager.IsEnd=GenatorMap.genatorMap.EndGame();
+        if(GameManager.gameManager.IsEnd)
+            GameManager.gameManager.End(true);
     }
     private void Rotate()
     {
