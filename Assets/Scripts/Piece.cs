@@ -12,7 +12,13 @@ public class Piece : MonoBehaviour
 
     private void Start()
     {
-        smooth = GameManager.gameManager.Smooth;
+        smooth = GameManager.Instance.Smooth;
+        int randomRotate = Random.Range(1, 4);
+        for (int i = 0; i < randomRotate; i++)
+        {
+            Rotate();
+            RotateValue();
+        }
     }
     private void Update()
     {
@@ -20,12 +26,15 @@ public class Piece : MonoBehaviour
     }
     private void OnMouseDown()
     {
-        Rotate();
-        RotateValue();
-        GenatorMap.genatorMap.CalculatorConected();
-        GameManager.gameManager.IsEnd=GenatorMap.genatorMap.EndGame();
-        if(GameManager.gameManager.IsEnd)
-            GameManager.gameManager.End(true);
+        if (!GameManager.Instance.IsEnd)
+        {
+            Rotate();
+            RotateValue();
+        }
+        GenatorMap.Instance.CalculatorConected();
+        GameManager.Instance.IsEnd = GenatorMap.Instance.EndGame();
+        if (GameManager.Instance.IsEnd)
+            GameManager.Instance.End(true);
     }
     private void Rotate()
     {

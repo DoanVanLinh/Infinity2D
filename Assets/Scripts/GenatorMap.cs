@@ -13,7 +13,7 @@ public class GenatorMap : MonoBehaviour
     [SerializeField] GameObject colInput;
 
     private List<Vector2> unVisited = new List<Vector2>();
-    private List<Vector2> stack = new List<Vector2>();
+    private Stack<Vector2> stack = new Stack<Vector2>();
     private Vector2[] neightborPos = new Vector2[] { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
     private Vector2 currentPos;
     private int row;
@@ -21,39 +21,45 @@ public class GenatorMap : MonoBehaviour
     private Piece[,] pieces;
     private GameObject parentPieces;
     private int preAmountConnect;
+    private static GenatorMap instance;
 
-    public static GenatorMap genatorMap;
-
+    public static GenatorMap Instance { get => instance; set => instance = value; }
+    #region Singleton
+    private void Awake()
+    {
+        if (instance == null)
+            instance = this;
+        else Destroy(gameObject);
+    }
+    #endregion
     void Start()
     {
-        Singleton();
-        row = GameManager.gameManager.Row;
-        col = GameManager.gameManager.Col;
-        CreateMap();
+        row = GameManager.Instance.Row;
+        col = GameManager.Instance.Col;
     }
-
-    // Update is called once per frame
-    void Update()
+    public void CreateMap(int row,int col)
     {
+        //if (rowInput.GetComponent<TMP_InputField>().text != "")
+        //    row = int.Parse(rowInput.GetComponent<TMP_InputField>().text);
+        //if (colInput.GetComponent<TMP_InputField>().text != "")
+        //    col = int.Parse(colInput.GetComponent<TMP_InputField>().text);
 
-    }
-    public void CreateMap()
-    {
-        if(rowInput.GetComponent<TMP_InputField>().text != "")
-            row = int.Parse(rowInput.GetComponent<TMP_InputField>().text);
-        if (colInput.GetComponent<TMP_InputField>().text != "")
-            col = int.Parse(rowInput.GetComponent<TMP_InputField>().text);
+        this.row = row;
+        this.col = col;
+
         currentPos = Vector2.zero;
         allPiece.Clear();
         allPieceToType.Clear();
         unVisited.Clear();
         stack.Clear();
         Destroy(parentPieces);
-        GameManager.gameManager.IsEnd = false;
-        GameManager.gameManager.End(false);
-        for (int x = 0; x < row; x++)
+
+        GameManager.Instance.IsEnd = false;
+        GameManager.Instance.End(false);
+        //add all piece
+        for (int x = 0; x < this.row; x++)
         {
-            for (int y = 0; y < col; y++)
+            for (int y = 0; y < this.col; y++)
             {
                 Vector2 pos = new Vector2(y, x);
                 allPiece.Add(pos, Vector4.zero);
@@ -66,7 +72,7 @@ public class GenatorMap : MonoBehaviour
         this.pieces = new Piece[this.row, this.col];
         SpawnArray();
         preAmountConnect = amountConnect;
-        this.amountConnect = CalculatorConect()-preAmountConnect;
+        this.amountConnect = CalculatorConect() - preAmountConnect;
         this.connected = CalculatorConected();
     }
     void FindWay()
@@ -80,20 +86,7 @@ public class GenatorMap : MonoBehaviour
             }
             else//make a new array or extent the current array
             {
-                if (Random.Range(0, 2) == 1)//Extention 
-                {
-                    while (stack.Count > 0)
-                    {
-                        currentPos = stack[stack.Count - 1];
-                        stack.Remove(currentPos);
-                        neighbor = GetNeighbor(currentPos);
-                        if (neighbor.Count != 0)
-                        {
-                            RandomWay(neighbor);
-                        }
-                    }
-                }
-                else // Make New
+                if (Random.Range(0, 5) == 1)//Make new
                 {
                     stack.Clear();
                     unVisited.Remove(currentPos);
@@ -101,6 +94,18 @@ public class GenatorMap : MonoBehaviour
                     {
                         currentPos = unVisited[Random.Range(0, unVisited.Count - 1)];
                         unVisited.Remove(currentPos);
+                    }
+                }
+                else // Extent
+                {
+                    while (stack.Count > 0)
+                    {
+                        currentPos = stack.Pop();//take and delete
+                        neighbor = GetNeighbor(currentPos);
+                        if (neighbor.Count != 0)
+                        {
+                            RandomWay(neighbor);
+                        }
                     }
                 }
             }
@@ -114,7 +119,7 @@ public class GenatorMap : MonoBehaviour
         Vector2 dir = nPos - currentPos;
         allPiece[currentPos] += SetDirection(dir);
         allPiece[nPos] += SetDirection(Vector2.zero - dir);
-        stack.Add(currentPos);
+        stack.Push(currentPos);
         currentPos = nPos;
         unVisited.Remove(nPos);
     }
@@ -152,12 +157,19 @@ public class GenatorMap : MonoBehaviour
     void SpawnArray()
     {
         parentPieces = Instantiate(piecesObj[5], Vector2.zero, Quaternion.identity);
+        Destroy(parentPieces.GetComponent<Piece>());
+        parentPieces.tag = "Untagged";
         parentPieces.name = "Pieces";
         foreach (var item in allPieceToType)
             SpawnPiece(item.Key, item.Value, parentPieces);
+        ResetCamPosition();
     }
-
-    void SpawnPiece(Vector2 pos, int typeOfPiece,GameObject parent)
+    public void ResetCamPosition()
+    {
+        GameManager.Instance.MainCamera.transform.position = new Vector3(row / 2f, col / 2f, -10);
+        GameManager.Instance.MainCamera.orthographicSize = 9f;
+    }
+    void SpawnPiece(Vector2 pos, int typeOfPiece, GameObject parent)
     {
         GameObject clone = Instantiate(this.piecesObj[typeOfPiece], pos, Quaternion.identity);
         clone.transform.parent = parent.transform;
@@ -247,11 +259,6 @@ public class GenatorMap : MonoBehaviour
         if (connected == amountConnect)
             return true;
         return false;
-    }
-    void Singleton()
-    {
-        if (genatorMap == null)
-            genatorMap = this;
     }
 
 }

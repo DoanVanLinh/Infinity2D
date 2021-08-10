@@ -6,7 +6,7 @@ public class CameraZoom : MonoBehaviour
 {
 
 	Camera mainCamera;
-
+	
 	float touchesPrevPosDifference, touchesCurPosDifference, zoomModifier;
 
 	Vector2 firstTouchPrevPos, secondTouchPrevPos;
@@ -14,8 +14,22 @@ public class CameraZoom : MonoBehaviour
 	[SerializeField]
 	float zoomModifierSpeed = 0.1f;
 
-	// Use this for initialization
-	void Start()
+	private Vector3 beginTouch;
+	private Vector3 endTouch;
+
+    private static CameraZoom instance;
+
+    public static CameraZoom Instance { get => instance; set => instance = value; }
+	#region Singleton
+	void Awake()
+    {
+		if (instance == null)
+			instance = this;
+		else
+			Destroy(gameObject);
+    }
+    #endregion
+    void Start()
 	{
 		mainCamera = Camera.main;
 	}
@@ -23,7 +37,6 @@ public class CameraZoom : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-
 		if (Input.touchCount == 2)
 		{
 			Touch firstTouch = Input.GetTouch(0);
@@ -44,7 +57,19 @@ public class CameraZoom : MonoBehaviour
 
 		}
 
-		mainCamera.orthographicSize = Mathf.Clamp(mainCamera.orthographicSize, 2f, 10f);
+		mainCamera.orthographicSize = Mathf.Clamp(mainCamera.orthographicSize, 2f, 100f);
 
+		//change position
+		if (Input.GetMouseButtonDown(0))
+			beginTouch = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        if (Input.GetMouseButton(0))
+        {
+			Vector3 direct = beginTouch - mainCamera.ScreenToWorldPoint(Input.mousePosition);
+			mainCamera.transform.position += direct * 0.2f;
+        }
+		if (Input.mouseScrollDelta.y > 0)
+			mainCamera.orthographicSize -= Time.deltaTime * 100f;
+		if (Input.mouseScrollDelta.y < 0)
+			mainCamera.orthographicSize += Time.deltaTime * 100f;
 	}
 }
