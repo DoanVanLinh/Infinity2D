@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
     public bool IsEnd { get => isEnd; set => isEnd = value; }
     public static GameManager Instance { get => instance; set => instance = value; }
     public Camera MainCamera { get => mainCamera; set => mainCamera = value; }
+    public bool IsNext { get; set; }
     #region Singleton
     private void Awake()
     {
@@ -58,7 +59,8 @@ public class GameManager : MonoBehaviour
     }
     void EnlessMode()
     {
-        if (isEnd && Input.GetMouseButtonDown(1))
+
+        if (isEnd && IsNext)
         {
             if (Mathf.Abs(row - col) > 3)
             {
@@ -83,6 +85,7 @@ public class GameManager : MonoBehaviour
             }
             GenatorMap.Instance.CreateMap(row, col);
             SetLevel(PlayerPrefs.GetInt("CurrentLevels") + 1);
+            IsNext = false;
         }
     }
     void SetLevel(int level)

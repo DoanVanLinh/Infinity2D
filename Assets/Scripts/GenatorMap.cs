@@ -37,7 +37,7 @@ public class GenatorMap : MonoBehaviour
         row = GameManager.Instance.Row;
         col = GameManager.Instance.Col;
     }
-    public void CreateMap(int row,int col)
+    public void CreateMap(int row, int col)
     {
         //if (rowInput.GetComponent<TMP_InputField>().text != "")
         //    row = int.Parse(rowInput.GetComponent<TMP_InputField>().text);
@@ -166,8 +166,9 @@ public class GenatorMap : MonoBehaviour
     }
     public void ResetCamPosition()
     {
-        GameManager.Instance.MainCamera.transform.position = new Vector3(row / 2f, col / 2f, -10);
-        GameManager.Instance.MainCamera.orthographicSize = 9f;
+        GameManager.Instance.MainCamera.transform.position = new Vector3( (col-1) / 2f,(row-1) / 2f, -10);
+        float cameraSize = col > row ? col : row * Screen.height / Screen.width * 0.5f;
+        GameManager.Instance.MainCamera.orthographicSize = cameraSize>9?cameraSize:9;
     }
     void SpawnPiece(Vector2 pos, int typeOfPiece, GameObject parent)
     {

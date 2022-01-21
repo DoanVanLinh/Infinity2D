@@ -9,7 +9,6 @@ public class Piece : MonoBehaviour
 
     private int angle;
     public int[] Values { get => values; set => values = value; }
-
     private void Start()
     {
         smooth = GameManager.Instance.Smooth;
