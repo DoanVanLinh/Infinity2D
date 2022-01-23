@@ -25,14 +25,11 @@ public class Piece : MonoBehaviour
     }
     private void OnMouseDown()
     {
-        if (!GameManager.Instance.IsEnd)
-        {
-            Rotate();
-            RotateValue();
-        }
+        if (GameManager.Instance.IsEnd) return;
+        Rotate();
+        RotateValue();
         GenatorMap.Instance.CalculatorConected();
-        GameManager.Instance.IsEnd = GenatorMap.Instance.EndGame();
-        if (GameManager.Instance.IsEnd)
+        if(GenatorMap.Instance.Complete())
             GameManager.Instance.End(true);
     }
     private void Rotate()

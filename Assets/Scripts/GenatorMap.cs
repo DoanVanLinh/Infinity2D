@@ -54,7 +54,6 @@ public class GenatorMap : MonoBehaviour
         stack.Clear();
         Destroy(parentPieces);
 
-        GameManager.Instance.IsEnd = false;
         GameManager.Instance.End(false);
         //add all piece
         for (int x = 0; x < this.row; x++)
@@ -255,7 +254,7 @@ public class GenatorMap : MonoBehaviour
             }
         }
     }
-    public bool EndGame()
+    public bool Complete()
     {
         if (connected == amountConnect)
             return true;
