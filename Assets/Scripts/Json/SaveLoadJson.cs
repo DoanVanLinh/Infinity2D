@@ -2,7 +2,6 @@ using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
 using UnityEditor;
-
 public static class SaveLoadJson
 {
 
@@ -18,7 +17,6 @@ public static class SaveLoadJson
         for (int i = 0; i < length; i++)
             json += JsonUtility.ToJson(data[i], true);
         File.WriteAllText(Application.dataPath + "/" + fileName, json);
-
     }
 
     public static void Update<T>(string fileName, T data)

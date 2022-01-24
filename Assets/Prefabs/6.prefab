@@ -45,3 +45,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   values: 00000000000000000000000000000000
   smooth: 1
+  isNew: 0

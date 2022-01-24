@@ -1,5 +1,7 @@
+[System.Serializable]
 public enum GameMode{
     ADVENTURE,
     TIME,
-    CUSTOM
+    NEW_CUSTOM,
+    CONTINUE_CUSTOM
 }

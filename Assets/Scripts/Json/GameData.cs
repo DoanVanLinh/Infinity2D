@@ -4,7 +4,7 @@ using System;
 [Serializable]
 public class GameData
 {
-    
+
     public bool sound;
     public bool vibrate;
     public AdventureMode adventureData;
@@ -29,21 +29,24 @@ public class GameData
     }
 }
 [Serializable]
-public class AdventureMode {
-     public int currentLevel;
-     public int currentRow;
-     public int currentCol;
+public class AdventureMode
+{
+    public int currentLevel;
+    public int currentRow;
+    public int currentCol;
+    public int repeatLevel;
     public AdventureMode()
     {
-        this.currentLevel =1;
+        this.currentLevel = repeatLevel = 1;
         this.currentRow = 2;
         this.currentCol = 3;
     }
 
 }
 [Serializable]
-public class TiemrMode {
-     public int maxLevel;
+public class TiemrMode
+{
+    public int maxLevel;
 
     public TiemrMode()
     {
@@ -51,10 +54,11 @@ public class TiemrMode {
     }
 }
 [Serializable]
-public class CustomMode {
-     public List<Piece> listPiece;
-     public int maxRow;
-     public int maxCol;
+public class CustomMode
+{
+    public List<Piece> listPiece;
+    public int maxRow;
+    public int maxCol;
 
     public CustomMode()
     {

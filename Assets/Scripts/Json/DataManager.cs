@@ -1,16 +1,17 @@
 using UnityEngine;
 using System.IO;
+
 public class DataManager : MonoBehaviour
 {
-    public static DataManager Instane;
-    [SerializeField] string fileName;
+    public static DataManager Instance;
+    [SerializeField]const string fileName = "Data.txt";
     [SerializeField] private GameData gameData;
 
     private void Awake()
     {
-        if (Instane == null)
+        if (Instance == null)
         {
-            Instane = this;
+            Instance = this;
             if (File.Exists(Application.dataPath + "/" + fileName))
                 gameData = SaveLoadJson.Load<GameData>(fileName);
             else
@@ -54,5 +55,4 @@ public class DataManager : MonoBehaviour
         gameData.vibrate = changeVibrate ? !gameData.vibrate : gameData.vibrate;
         SaveLoadJson.Create<GameData>(fileName, gameData);
     }
-
 }

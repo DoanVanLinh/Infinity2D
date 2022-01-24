@@ -126,6 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   values: 01000000000000000100000000000000
   smooth: 0.095
+  isNew: 0
 --- !u!114 &-5018736696313624665
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -3,20 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using TMPro;
 
 [RequireComponent(typeof(GenatorMap))]
 [RequireComponent(typeof(CameraZoom))]
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] int row;
-    [SerializeField] int col;
+    [Header("Adventure Mode")]
     [SerializeField] float smooth;
     [SerializeField] Animator finishAni;
     [SerializeField] TextMeshProUGUI currentLevel;
     [SerializeField] ParticleSystem finishEffect;
     public GameMode currentMode;
+    private int currentLevelAdventure;
     [Space]
     [Header("Time Mode")]
     public Image leftTimer;
@@ -28,11 +27,16 @@ public class GameManager : MonoBehaviour
 
 
     private Camera mainCamera;
-    private bool isEnd;
+    private bool isEnd = false;
     private static GameManager instance;
     private float currentTimer;
     private int currentLevelTimer;
     private int repeatLevel = 0;
+    private int row;
+    private int col;
+    private AdventureMode adventureData;
+    private TiemrMode timerData;
+    private CustomMode customData;
 
     public float Smooth { get => smooth; set => smooth = value; }
     public int Row { get => row; set => row = value; }
@@ -55,13 +59,19 @@ public class GameManager : MonoBehaviour
     #endregion
     void Start()
     {
-        SetLevel(1);
+        currentMode = ScenesManager.Instance.gameMode;
         mainCamera = Camera.main;
         isEnd = false;
+
         switch (currentMode)
         {
             case GameMode.ADVENTURE:
-                repeatLevel = RepeatLevel();
+                adventureData = DataManager.Instance.GetDataGame().adventureData;
+                repeatLevel = adventureData.repeatLevel;
+                col = adventureData.currentCol;
+                row = adventureData.currentRow;
+                currentLevelAdventure = adventureData.currentLevel;
+                SetLevel();
                 GenatorMap.Instance.CreateMap(row, col);
                 repeatLevel--;
                 leftTimer.enabled = rightTimer.enabled = false;
@@ -71,7 +81,7 @@ public class GameManager : MonoBehaviour
             case GameMode.TIME:
                 StartTimerMode();
                 break;
-            case GameMode.CUSTOM:
+            case GameMode.NEW_CUSTOM:
                 GenatorMap.Instance.CreateMap(row, col);
                 break;
         }
@@ -86,8 +96,9 @@ public class GameManager : MonoBehaviour
             case GameMode.TIME:
                 TimeMode();
                 break;
-            case GameMode.CUSTOM:
-                AdventureMode();
+            case GameMode.NEW_CUSTOM:
+            case GameMode.CONTINUE_CUSTOM:
+                CustomMode();
                 break;
 
         }
@@ -110,8 +121,6 @@ public class GameManager : MonoBehaviour
     }
     void AdventureMode()
     {
-        Debug.Log(repeatLevel);
-
         if (isEnd && IsNext)
         {
             if (repeatLevel == 0)
@@ -141,20 +150,32 @@ public class GameManager : MonoBehaviour
             }
             GenatorMap.Instance.CreateMap(row, col);
             repeatLevel--;
-            SetLevel(PlayerPrefs.GetInt("CurrentLevels") + 1);
+            currentLevelAdventure++;
+            SaveDataAdventureMode();
+            SetLevel();
             IsNext = false;
         }
     }
-    void SetLevel(int level)
+    void SetLevel()
     {
-        PlayerPrefs.SetInt("CurrentLevels", level);
-        currentLevel.text = "#" + PlayerPrefs.GetInt("CurrentLevels").ToString();
+        currentLevel.text = "#" + adventureData.currentLevel.ToString();
     }
+    public void SaveDataAdventureMode()
+    {
+        adventureData.currentRow = row;
+        adventureData.currentCol = col;
+        adventureData.currentLevel = currentLevelAdventure;
+        adventureData.repeatLevel = repeatLevel;
+        DataManager.Instance.UpdateData(adventureData);
+    }
+
     #endregion
 
     #region Timer Mode
     public void StartTimerMode()
     {
+        timerData = DataManager.Instance.GetDataGame().timerData;
+        row = col = 4;
         endGameTimerPanel.gameObject.SetActive(true);
         leftTimer.enabled = rightTimer.enabled = true;
         currentTimer = limitTime;
@@ -208,6 +229,33 @@ public class GameManager : MonoBehaviour
         IsEnd = true;
         endGameTimerPanel.SetTrigger("Show");
         scoreTxt.text = currentLevelTimer.ToString();
+        if (currentLevelTimer > timerData.maxLevel)
+        {
+            hightScoreTxt.text = "HIGHT SCORRE";
+            timerData.maxLevel = currentLevelTimer;
+            DataManager.Instance.UpdateData(timerData);
+        }
+        else
+            hightScoreTxt.text = "SCORE";
+    }
+    #endregion
+
+    #region Custom Mode
+    private void CustomMode()
+    {
+        if(GenatorMap.Instance.Complete())
+        {
+            EndCustomMode();
+        }
+        
+    }
+    private void EndCustomMode()
+    {
+
+    }
+    private void StartCustomMode()
+    {
+        customData = DataManager.Instance.GetDataGame().customData;
     }
     #endregion
 }
