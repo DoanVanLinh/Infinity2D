@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraZoom : MonoBehaviour
 {
-
+    
     Camera mainCamera;
 
     float touchesPrevPosDifference, touchesCurPosDifference, zoomModifier;

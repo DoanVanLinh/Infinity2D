@@ -6,17 +6,23 @@ public class Piece : MonoBehaviour
 {
     [SerializeField] int[] values;
     [SerializeField] float smooth;
+    public bool isNew;
 
     private int angle;
     public int[] Values { get => values; set => values = value; }
     private void Start()
     {
+        
         smooth = GameManager.Instance.Smooth;
-        int randomRotate = Random.Range(1, 4);
-        for (int i = 0; i < randomRotate; i++)
+        if (isNew)
         {
-            Rotate();
-            RotateValue();
+            int randomRotate = Random.Range(1, 4);
+            for (int i = 0; i < randomRotate; i++)
+            {
+                Rotate();
+                RotateValue();
+            }
+            isNew = false;
         }
     }
     private void Update()
@@ -29,7 +35,7 @@ public class Piece : MonoBehaviour
         Rotate();
         RotateValue();
         GenatorMap.Instance.CalculatorConected();
-        if(GenatorMap.Instance.Complete())
+        if (GenatorMap.Instance.Complete())
             GameManager.Instance.End(true);
     }
     private void Rotate()

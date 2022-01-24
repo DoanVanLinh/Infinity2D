@@ -1,0 +1,16 @@
+{
+    "sound": false,
+    "vibrate": false,
+    "adventureData": {
+        "currentLevel": 1,
+        "maxLevel": 1
+    },
+    "timerData": {
+        "maxLevel": 1
+    },
+    "customData": {
+        "listPiece": [],
+        "maxRow": 1,
+        "maxCol": 1
+    }
+}
