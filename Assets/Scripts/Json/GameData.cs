@@ -59,11 +59,15 @@ public class CustomMode
     public List<Piece> listPiece;
     public int maxRow;
     public int maxCol;
+    public int currentRow;
+    public int currentCol;
 
     public CustomMode()
     {
         this.listPiece = new List<Piece>();
         this.maxRow = 1;
         this.maxCol = 1;
+        this.currentRow = 1;
+        this.currentCol = 1;
     }
 }

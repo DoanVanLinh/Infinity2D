@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class ScenesManager : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class ScenesManager : MonoBehaviour
         else
             Destroy(gameObject);
         DontDestroyOnLoad(this);
+        
     }
 
     public void SwitchScene(string nameScene)
@@ -22,4 +24,5 @@ public class ScenesManager : MonoBehaviour
     {
         this.gameMode = (GameMode)gameMode;
     }
+    
 }

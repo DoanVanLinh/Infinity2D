@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
-using UnityEditor;
+
 public static class SaveLoadJson
 {
 
@@ -22,7 +22,7 @@ public static class SaveLoadJson
     public static void Update<T>(string fileName, T data)
     {
         string json = File.ReadAllText(Application.dataPath + "/" + fileName);
-        EditorJsonUtility.FromJsonOverwrite(json, (T)data);
+        JsonUtility.FromJsonOverwrite(json, (T)data);
     }
     public static T Load<T>(string fileName)
     {

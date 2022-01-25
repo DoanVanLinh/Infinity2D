@@ -5,7 +5,6 @@ using TMPro;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(GenatorMap))]
-[RequireComponent(typeof(CameraZoom))]
 
 public class GameManager : MonoBehaviour
 {
@@ -51,7 +50,6 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
             Destroy(gameObject);
@@ -82,7 +80,7 @@ public class GameManager : MonoBehaviour
                 StartTimerMode();
                 break;
             case GameMode.NEW_CUSTOM:
-                GenatorMap.Instance.CreateMap(row, col);
+                StartNewCustomMode();
                 break;
         }
     }
@@ -243,19 +241,24 @@ public class GameManager : MonoBehaviour
     #region Custom Mode
     private void CustomMode()
     {
-        if(GenatorMap.Instance.Complete())
+        if (GenatorMap.Instance.Complete())
         {
             EndCustomMode();
         }
-        
+
     }
     private void EndCustomMode()
     {
 
     }
-    private void StartCustomMode()
+    private void StartNewCustomMode()
     {
         customData = DataManager.Instance.GetDataGame().customData;
+        leftTimer.enabled = rightTimer.enabled = false;
+        endGameTimerPanel.gameObject.SetActive(false);
+        row = PlayerPrefs.GetInt("Row");
+        col = PlayerPrefs.GetInt("Col");
+        GenatorMap.Instance.CreateMap(row, col);
     }
     #endregion
 }

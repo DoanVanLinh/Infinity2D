@@ -1,11 +1,11 @@
 {
-    "sound": true,
+    "sound": false,
     "vibrate": true,
     "adventureData": {
-        "currentLevel": 61,
+        "currentLevel": 64,
         "currentRow": 4,
         "currentCol": 5,
-        "repeatLevel": 38
+        "repeatLevel": 33
     },
     "timerData": {
         "maxLevel": 2
@@ -13,6 +13,8 @@
     "customData": {
         "listPiece": [],
         "maxRow": 1,
-        "maxCol": 1
+        "maxCol": 1,
+        "currentRow": 1,
+        "currentCol": 1
     }
 }
