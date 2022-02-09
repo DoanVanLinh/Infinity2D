@@ -8,8 +8,16 @@ public class Piece : MonoBehaviour
     [SerializeField] float smooth;
     public bool isNew;
 
-    private int angle;
+    public int angle;
+
+    public void SetValues(Piece exitsPiece)
+    {
+        this.values = exitsPiece.values;
+        this.isNew = exitsPiece.isNew;
+    }
+
     public int[] Values { get => values; set => values = value; }
+    
     private void Start()
     {
         

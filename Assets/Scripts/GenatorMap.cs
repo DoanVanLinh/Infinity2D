@@ -19,11 +19,14 @@ public class GenatorMap : MonoBehaviour
     private int row;
     private int col;
     private Piece[,] pieces;
-    private GameObject parentPieces;
+    public GameObject parentPieces;
     private int preAmountConnect;
     private static GenatorMap instance;
 
     public static GenatorMap Instance { get => instance; set => instance = value; }
+    public Piece[,] Pieces { get => pieces; set => pieces = value; }
+    public int Row { get => row; set => row = value; }
+    public int Col { get => col; set => col = value; }
     #region Singleton
     private void Awake()
     {
@@ -34,8 +37,8 @@ public class GenatorMap : MonoBehaviour
     #endregion
     void Start()
     {
-        row = GameManager.Instance.Row;
-        col = GameManager.Instance.Col;
+        Row = GameManager.Instance.Row;
+        Col = GameManager.Instance.Col;
     }
     public void CreateMap(int row, int col)
     {
@@ -44,8 +47,8 @@ public class GenatorMap : MonoBehaviour
         //if (colInput.GetComponent<TMP_InputField>().text != "")
         //    col = int.Parse(colInput.GetComponent<TMP_InputField>().text);
 
-        this.row = row;
-        this.col = col;
+        this.Row = row;
+        this.Col = col;
 
         currentPos = Vector2.zero;
         allPiece.Clear();
@@ -56,9 +59,9 @@ public class GenatorMap : MonoBehaviour
 
         GameManager.Instance.End(false);
         //add all piece
-        for (int x = 0; x < this.row; x++)
+        for (int x = 0; x < this.Row; x++)
         {
-            for (int y = 0; y < this.col; y++)
+            for (int y = 0; y < this.Col; y++)
             {
                 Vector2 pos = new Vector2(y, x);
                 allPiece.Add(pos, Vector4.zero);
@@ -68,8 +71,12 @@ public class GenatorMap : MonoBehaviour
         unVisited.Remove(Vector2.zero);
         FindWay();
         TransferVector4ToInt();
-        this.pieces = new Piece[this.row, this.col];
+        this.pieces = new Piece[this.Row, this.Col];
         SpawnArray();
+        ReCalculatorConnect();
+    }
+    public void ReCalculatorConnect()
+    {
         preAmountConnect = amountConnect;
         this.amountConnect = CalculatorConect() - preAmountConnect;
         this.connected = CalculatorConected();
@@ -165,14 +172,15 @@ public class GenatorMap : MonoBehaviour
     }
     public void ResetCamPosition()
     {
-        GameManager.Instance.MainCamera.transform.position = new Vector3( (col-1) / 2f,(row-1) / 2f, -10);
-        float cameraSize = col > row ? col : row * Screen.height / Screen.width * 0.5f;
-        GameManager.Instance.MainCamera.orthographicSize = cameraSize>9?cameraSize:9;
+        GameManager.Instance.MainCamera.transform.position = new Vector3((Col - 1) / 2f, (Row - 1) / 2f, -10);
+        float cameraSize = Col > Row ? Col : Row * Screen.height / Screen.width * 0.5f;
+        GameManager.Instance.MainCamera.orthographicSize = cameraSize > 9 ? cameraSize : 9;
     }
     void SpawnPiece(Vector2 pos, int typeOfPiece, GameObject parent)
     {
         GameObject clone = Instantiate(this.piecesObj[typeOfPiece], pos, Quaternion.identity);
         clone.transform.parent = parent.transform;
+
         this.pieces[(int)pos.y, (int)pos.x] = clone.GetComponent<Piece>();
     }
     int CalculatorConect()
@@ -190,16 +198,16 @@ public class GenatorMap : MonoBehaviour
     public int CalculatorConected()
     {
         int amount = 0;
-        for (int i = 0; i < this.row; i++)
+        for (int i = 0; i < this.Row; i++)
         {
-            for (int j = 0; j < this.col; j++)
+            for (int j = 0; j < this.Col; j++)
             {
                 //left to right
-                if (j != this.col - 1)
+                if (j != this.Col - 1)
                     if (this.pieces[i, j].Values[1] == 1 && this.pieces[i, j + 1].Values[3] == 1)
                         amount++;
                 //bottom to top
-                if (i != this.row - 1)
+                if (i != this.Row - 1)
                     if (this.pieces[i, j].Values[0] == 1 && this.pieces[i + 1, j].Values[2] == 1)
                         amount++;
             }

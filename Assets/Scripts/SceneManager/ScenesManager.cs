@@ -24,5 +24,7 @@ public class ScenesManager : MonoBehaviour
     {
         this.gameMode = (GameMode)gameMode;
     }
-    
+    private void LateUpdate() {
+        Application.targetFrameRate = 60;
+    }
 }

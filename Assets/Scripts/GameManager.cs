@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEditor;
 
 [RequireComponent(typeof(GenatorMap))]
 
@@ -36,6 +37,7 @@ public class GameManager : MonoBehaviour
     private AdventureMode adventureData;
     private TiemrMode timerData;
     private CustomMode customData;
+    public GameObject allPiece;
 
     public float Smooth { get => smooth; set => smooth = value; }
     public int Row { get => row; set => row = value; }
@@ -80,7 +82,17 @@ public class GameManager : MonoBehaviour
                 StartTimerMode();
                 break;
             case GameMode.NEW_CUSTOM:
+                customData = DataManager.Instance.GetDataGame().customData;
+                leftTimer.enabled = rightTimer.enabled = false;
+                endGameTimerPanel.gameObject.SetActive(false);
                 StartNewCustomMode();
+                break;
+            case GameMode.CONTINUE_CUSTOM:
+                allPiece = (GameObject)Resources.Load("Prefabs/Pieces", typeof(GameObject));
+                customData = DataManager.Instance.GetDataGame().customData;
+                leftTimer.enabled = rightTimer.enabled = false;
+                endGameTimerPanel.gameObject.SetActive(false);
+                ContinuesCustomMode();
                 break;
         }
     }
@@ -113,12 +125,17 @@ public class GameManager : MonoBehaviour
     public void End(bool show)
     {
         isEnd = show;
-        finishAni.SetBool("In-Out", show);
-        if (show)
+        
+    }
+    public void EndAdventureMode()
+    {
+        finishAni.SetBool("In-Out", isEnd);
+        if (isEnd)
             finishEffect.Play();
     }
     void AdventureMode()
     {
+        EndAdventureMode();
         if (isEnd && IsNext)
         {
             if (repeatLevel == 0)
@@ -253,12 +270,44 @@ public class GameManager : MonoBehaviour
     }
     private void StartNewCustomMode()
     {
-        customData = DataManager.Instance.GetDataGame().customData;
-        leftTimer.enabled = rightTimer.enabled = false;
-        endGameTimerPanel.gameObject.SetActive(false);
         row = PlayerPrefs.GetInt("Row");
         col = PlayerPrefs.GetInt("Col");
         GenatorMap.Instance.CreateMap(row, col);
+        currentLevel.text = customData.currentRow + " x " + customData.currentRow;
+        SaveCustomMode();
     }
+    public void SaveCustomMode()
+    {
+        string localPath = "Assets/Resources/Prefabs/" + "Pieces" + ".prefab";
+
+        PrefabUtility.SaveAsPrefabAssetAndConnect(GenatorMap.Instance.parentPieces, localPath, InteractionMode.UserAction);
+
+        allPiece = (GameObject)Resources.Load("Prefabs/Pieces", typeof(GameObject));
+        
+        customData.currentCol = col;
+        customData.currentRow = row;
+        DataManager.Instance.UpdateData(customData);
+    }
+    private void ContinuesCustomMode()
+    {
+        row = customData.currentRow;
+        col = customData.currentCol;
+        GenatorMap.Instance.parentPieces = Instantiate(allPiece, Vector3.zero, Quaternion.identity);
+
+         GenatorMap.Instance.Pieces = new Piece[row,col];
+         GenatorMap.Instance.Row = row;
+         GenatorMap.Instance.Col = col;
+         for (int x = 0; x < this.row; x++)
+        {
+            for (int y = 0; y < this.col; y++)
+            {
+                GenatorMap.Instance.Pieces[x,y] = GenatorMap.Instance.parentPieces.transform.GetChild(x*row+y).GetComponent<Piece>();
+            }
+        }
+
+        GenatorMap.Instance.ReCalculatorConnect();
+        GenatorMap.Instance.ResetCamPosition();
+    }
+
     #endregion
 }

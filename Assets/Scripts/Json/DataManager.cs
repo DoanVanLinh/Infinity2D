@@ -4,7 +4,7 @@ using System.IO;
 public class DataManager : MonoBehaviour
 {
     public static DataManager Instance;
-    [SerializeField]const string fileName = "Data.txt";
+    [SerializeField]const string fileName = "Data.json";
     [SerializeField] private GameData gameData;
 
     private void Awake()
@@ -12,7 +12,7 @@ public class DataManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            if (File.Exists(Application.dataPath + "/" + fileName))
+            if (File.Exists(Application.persistentDataPath + "/" + fileName))
                 gameData = SaveLoadJson.Load<GameData>(fileName);
             else
             { 
